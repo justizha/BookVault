@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import LandingPage from "@/pages/dashboard/page";
 import RootRedirect from "@/components/auth/RouteRedirect";
 import LoginPage from "@/pages/auth/login/page";
 import DashboardPage from "@/pages/dashboard/page";
