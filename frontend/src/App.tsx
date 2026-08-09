@@ -5,7 +5,7 @@ import RootRedirect from "@/components/auth/RouteRedirect";
 import LoginPage from "@/pages/auth/login/page";
 import DashboardPage from "@/pages/dashboard/page";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import RegisterPage from "@/pages/auth/Registrer";
+import RegisterPage from "@/pages/auth/register/page";
 const queryClient = new QueryClient();
 
 export default function App() {
