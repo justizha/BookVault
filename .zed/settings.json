@@ -1,0 +1,7 @@
+{
+  "show_edit_predictions": true,
+  "edit_predictions": {
+     "provider": "zed",
+     "disabled_globs": ["**/.env", "**/*.md"] 
+   }
+}
