@@ -1,4 +1,27 @@
-import Page from "./pages/dashboard/page";
+import { BrowserRouter, Routes, Route } from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import LandingPage from "@/pages/dashboard/page";
+import RootRedirect from "@/components/auth/RouteRedirect";
+import LoginPage from "@/pages/auth/login/page";
+import DashboardPage from "@/pages/dashboard/page";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import RegisterPage from "@/pages/auth/Registrer";
+const queryClient = new QueryClient();
+
 export default function App() {
-    return <Page />;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<RootRedirect />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/dashboard" element={<DashboardPage />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </QueryClientProvider>
+    );
 }
