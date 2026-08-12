@@ -6,20 +6,26 @@ import DashboardPage from "@/pages/dashboard/page";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import RegisterPage from "@/pages/auth/register/page";
 const queryClient = new QueryClient();
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<RootRedirect />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                <ThemeProvider>
+                    <Routes>
+                        <Route path="/" element={<RootRedirect />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
 
-                    <Route element={<ProtectedRoute />}>
-                        <Route path="/dashboard" element={<DashboardPage />} />
-                    </Route>
-                </Routes>
+                        <Route element={<ProtectedRoute />}>
+                            <Route
+                                path="/dashboard"
+                                element={<DashboardPage />}
+                            />
+                        </Route>
+                    </Routes>
+                </ThemeProvider>
             </BrowserRouter>
         </QueryClientProvider>
     );

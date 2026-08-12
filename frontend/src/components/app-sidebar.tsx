@@ -26,6 +26,7 @@ import {
     TerminalIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+
 const data = {
     navMain: [
         {
