@@ -42,9 +42,20 @@ jobs:
         EOL
         fi
 
+    - name: Validate composer.json
+      working-directory: backend
+      run: composer validate
+
     - name: Install Dependencies
       working-directory: backend
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: |
+        composer install \
+          --no-ansi \
+          --no-interaction \
+          --no-scripts \
+          --no-progress \
+          --prefer-dist \
+          --verbose
 
     - name: Generate key
       working-directory: backend
