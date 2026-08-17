@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Auth
+class AuthController extends Controller
 {
     public function register(Request $request)
     {
@@ -17,7 +17,6 @@ class AuthController extends Auth
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'nullable|string|exists:roles,name',
         ]);
 
         if ($validator->fails()) {
@@ -27,8 +26,10 @@ class AuthController extends Auth
             ], 422);
         }
 
-        $roleName = $request->input('role', 'staff');
-        $role = Role::where('name', $roleName)->first();
+        // Always assign the lowest-privilege role on public registration —
+        // never take role from client input here, that's a privilege
+        // escalation risk (client could otherwise pass role=admin).
+        $role = Role::where('name', 'cashier')->first();
 
         $user = User::create([
             'name' => $request->name,
