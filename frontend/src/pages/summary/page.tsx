@@ -29,7 +29,8 @@ export default function BooksSummaryPage() {
                     <Skeleton className="h-32" />
                     <Skeleton className="h-32" />
                 </div>
-                <Skeleton className="h-64" />
+                <Skeleton className="h-72" />
+                <Skeleton className="h-72" />
             </div>
         );
     }
