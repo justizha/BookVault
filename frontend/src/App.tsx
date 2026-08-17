@@ -7,7 +7,10 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import RegisterPage from "@/pages/auth/register/page";
 const queryClient = new QueryClient();
 import { ThemeProvider } from "@/components/theme-provider";
-
+import NotFound from "./pages/NotFound";
+/**
+ * Renders the application with shared providers and client-side routes.
+ */
 export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
@@ -24,6 +27,7 @@ export default function App() {
                                 element={<DashboardPage />}
                             />
                         </Route>
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </ThemeProvider>
             </BrowserRouter>

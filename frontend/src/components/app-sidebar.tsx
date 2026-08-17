@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -14,105 +13,43 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-    TerminalSquareIcon,
-    BotIcon,
+    LayoutDashboardIcon,
     BookOpenIcon,
-    Settings2Icon,
+    PackageIcon,
+    TagIcon,
+    UsersIcon,
     LifeBuoyIcon,
-    SendIcon,
-    FrameIcon,
-    PieChartIcon,
-    MapIcon,
-    TerminalIcon,
+    LibraryIcon
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 const data = {
     navMain: [
         {
-            title: "Playground",
-            url: "#",
-            icon: <TerminalSquareIcon />,
+            title: "Dashboard",
+            url: "/dashboard",
+            icon: <LayoutDashboardIcon />,
             isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
         },
         {
-            title: "Models",
-            url: "#",
-            icon: <BotIcon />,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Documentation",
-            url: "#",
+            title: "Books",
+            url: "/books",
             icon: <BookOpenIcon />,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
         },
         {
-            title: "Settings",
-            url: "#",
-            icon: <Settings2Icon />,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
+            title: "Stock",
+            url: "/stock",
+            icon: <PackageIcon />,
+        },
+        {
+            title: "Prices",
+            url: "/prices",
+            icon: <TagIcon />,
+        },
+        {
+            title: "Users",
+            url: "/users",
+            icon: <UsersIcon />,
         },
     ],
     navSecondary: [
@@ -121,37 +58,21 @@ const data = {
             url: "#",
             icon: <LifeBuoyIcon />,
         },
-        {
-            title: "Feedback",
-            url: "#",
-            icon: <SendIcon />,
-        },
-    ],
-    projects: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: <FrameIcon />,
-        },
-        {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: <PieChartIcon />,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: <MapIcon />,
-        },
     ],
 };
+
+/**
+ * Renders the application's navigation sidebar with primary navigation, support links, and the authenticated user's information.
+ *
+ * @param props - Properties forwarded to the sidebar component.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const authUser = useAuthStore((s) => s.user);
 
     const user = {
         name: authUser?.name ?? "Guest",
         email: authUser?.email ?? "",
-        avatar: "", // no avatar field on your backend User yet
+        avatar: "",
     };
 
     return (
@@ -162,16 +83,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" render={<a href="#" />}>
+                        <SidebarMenuButton size="lg" render={<a href="/dashboard" />}>
                             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                <TerminalIcon className="size-4" />
+                                <LibraryIcon className="size-4" />
                             </div>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium">
-                                    Acme Inc
+                                    BookVault
                                 </span>
                                 <span className="truncate text-xs">
-                                    Enterprise
+                                    Store Management
                                 </span>
                             </div>
                         </SidebarMenuButton>
@@ -180,7 +101,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavProjects projects={data.projects} />
                 <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
