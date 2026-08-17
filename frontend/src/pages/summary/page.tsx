@@ -15,6 +15,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Displays book inventory metrics, category counts, and recently added books.
+ *
+ * @returns The summary layout, loading placeholders, or `null` when no summary data is available.
+ */
 export default function BooksSummaryPage() {
     const { data, isLoading } = useQuery({
         queryKey: ["books-summary"],
