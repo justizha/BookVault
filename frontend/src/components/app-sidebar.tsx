@@ -61,6 +61,11 @@ const data = {
     ],
 };
 
+/**
+ * Renders the application's navigation sidebar with primary navigation, support links, and the authenticated user's information.
+ *
+ * @param props - Properties forwarded to the sidebar component.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const authUser = useAuthStore((s) => s.user);
 
