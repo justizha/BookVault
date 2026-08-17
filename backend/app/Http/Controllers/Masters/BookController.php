@@ -26,6 +26,29 @@ class BookController extends Controller
         return response()->json($books);
     }
 
+    public function summary()
+    {
+        return response()->json([
+            'total_books' => Book::active()->count(),
+            'low_stock_count' => Book::active()->whereHas('stock', fn ($q) =>
+                $q->where('quantity', '>', 0)->where('quantity', '<=', 10)
+            )->count(),
+            'out_of_stock_count' => Book::active()->whereHas('stock', fn ($q) =>
+                $q->where('quantity', 0)
+            )->count(),
+            'by_category' => Book::active()
+                ->selectRaw('category, count(*) as count')
+                ->groupBy('category')
+                ->orderByDesc('count')
+                ->get(),
+            'recent_books' => Book::with(['stock', 'currentPrice'])
+                ->active()
+                ->latest()
+                ->limit(5)
+                ->get(),
+        ]);
+    }
+
     public function show(string $bookCode){
         $book = Book::with(['stock', 'currentPrice'])
                 ->where('book_code', $bookCode)
