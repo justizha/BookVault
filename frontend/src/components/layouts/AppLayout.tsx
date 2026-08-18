@@ -1,16 +1,9 @@
+import { Outlet } from "react-router";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import BooksSummaryPage from "@/pages/summary/page";
 
-export const iframeHeight = "800px";
-
-export const description = "A sidebar with a header and a search form.";
-
-/**
- * Renders the books summary dashboard with its header and sidebar navigation.
- */
-export default function Page() {
+export default function AppLayout() {
     return (
         <div className="[--header-height:calc(--spacing(14))]">
             <SidebarProvider className="flex flex-col">
@@ -18,7 +11,7 @@ export default function Page() {
                 <div className="flex flex-1">
                     <AppSidebar />
                     <SidebarInset>
-                        <BooksSummaryPage />
+                        <Outlet />
                     </SidebarInset>
                 </div>
             </SidebarProvider>
