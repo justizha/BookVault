@@ -19,9 +19,10 @@ import {
     TagIcon,
     UsersIcon,
     LifeBuoyIcon,
-    LibraryIcon
+    LibraryIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import { Link } from "react-router";
 
 const data = {
     navMain: [
@@ -83,7 +84,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" render={<a href="/dashboard" />}>
+                        <SidebarMenuButton
+                            size="lg"
+                            render={<Link to="/dashboard" />}
+                        >
                             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                                 <LibraryIcon className="size-4" />
                             </div>
