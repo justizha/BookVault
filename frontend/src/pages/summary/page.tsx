@@ -126,10 +126,11 @@ export default function BooksSummaryPage() {
                             />
                             <XAxis
                                 dataKey="category"
-                                fontSize={12}
+                                fontSize={9}
                                 stroke="var(--color-muted-foreground)"
                                 tickLine={false}
                                 axisLine={false}
+                                interval={0}
                             />
                             <YAxis
                                 fontSize={12}
