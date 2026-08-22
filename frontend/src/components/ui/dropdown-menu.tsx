@@ -80,7 +80,7 @@ function DropdownMenuItem({
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
-  variant?: "default" | "destructive"
+  variant?: "default" | "destructive" | "primary" | "success" | "warning"
 }) {
   return (
     <MenuPrimitive.Item
@@ -88,7 +88,15 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-2.5 rounded-none px-3 py-2 text-xs font-medium tracking-wider uppercase outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:pl-9.5 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 data-[variant=destructive]:*:[svg]:text-destructive",
+        "group/dropdown-menu-item relative flex cursor-default items-center gap-2.5 rounded-none px-3 py-2 text-xs font-medium tracking-wider uppercase outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:not-data-[variant=primary]:not-data-[variant=success]:not-data-[variant=warning]:focus:**:text-accent-foreground data-inset:pl-9.5 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+        // destructive
+        "data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:*:[svg]:text-destructive",
+        // primary
+        "data-[variant=primary]:text-primary data-[variant=primary]:focus:bg-primary/10 data-[variant=primary]:focus:text-primary dark:data-[variant=primary]:focus:bg-primary/20 data-[variant=primary]:*:[svg]:text-primary",
+        // success
+        "data-[variant=success]:text-accent data-[variant=success]:focus:bg-accent/10 data-[variant=success]:focus:text-accent dark:data-[variant=success]:focus:bg-accent/20 data-[variant=success]:*:[svg]:text-accent",
+        // warning
+        "data-[variant=warning]:text-amber-600 data-[variant=warning]:focus:bg-amber-500/10 data-[variant=warning]:focus:text-amber-600 dark:data-[variant=warning]:text-amber-400 dark:data-[variant=warning]:focus:bg-amber-500/15 dark:data-[variant=warning]:focus:text-amber-400 data-[variant=warning]:*:[svg]:text-amber-600 dark:data-[variant=warning]:*:[svg]:text-amber-400",
         className
       )}
       {...props}
