@@ -1,6 +1,16 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Link, useNavigate } from "react-router";
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    ResponsiveContainer,
+    Tooltip,
+    CartesianGrid,
+    Rectangle,
+} from "recharts";
 import { getBooksSummary } from "@/api/books";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,12 +25,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-/**
- * Displays book inventory metrics, category counts, and recently added books.
- *
- * @returns The summary layout, loading placeholders, or `null` when no summary data is available.
- */
+function ChartTooltip({
+    active,
+    payload,
+}: {
+    active?: boolean;
+    payload?: { payload: { category: string; count: number } }[];
+}) {
+    if (!active || !payload?.length) return null;
+    const { category, count } = payload[0].payload;
+    return (
+        <div className="rounded-md border border-border bg-popover px-3 py-2 text-popover-foreground shadow-md">
+            <p className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+                {category}
+            </p>
+            <p className="text-sm font-bold">{count} books</p>
+        </div>
+    );
+}
+
 export default function BooksSummaryPage() {
+    const navigate = useNavigate();
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
     const { data, isLoading } = useQuery({
         queryKey: ["books-summary"],
         queryFn: getBooksSummary,
@@ -44,7 +71,7 @@ export default function BooksSummaryPage() {
 
     return (
         <div className="space-y-6 p-6">
-            {/* stat cards */}
+            {/* stat cards unchanged */}
             <div className="grid grid-cols-3 gap-4">
                 <Card>
                     <CardHeader>
@@ -78,27 +105,73 @@ export default function BooksSummaryPage() {
                 </Card>
             </div>
 
-            {/* chart */}
+            {/* interactive chart */}
             <Card>
                 <CardHeader>
                     <CardTitle>Books by Category</CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                        Click a bar to view that category
+                    </p>
                 </CardHeader>
                 <CardContent>
-                    <ResponsiveContainer width="100%" height={250}>
-                        <BarChart data={data.by_category}>
-                            <XAxis dataKey="category" fontSize={12} />
-                            <YAxis fontSize={12} />
+                    <ResponsiveContainer width="100%" height={260}>
+                        <BarChart
+                            data={data.by_category}
+                            onMouseLeave={() => setActiveCategory(null)}
+                        >
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="var(--color-border)"
+                                vertical={false}
+                            />
+                            <XAxis
+                                dataKey="category"
+                                fontSize={12}
+                                stroke="var(--color-muted-foreground)"
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <YAxis
+                                fontSize={12}
+                                stroke="var(--color-muted-foreground)"
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <Tooltip
+                                content={<ChartTooltip />}
+                                cursor={{ fill: "var(--color-muted)" }}
+                            />
                             <Bar
                                 dataKey="count"
-                                fill="var(--color-primary)"
                                 radius={4}
+                                onMouseEnter={(entry) =>
+                                    setActiveCategory(entry.payload.category)
+                                }
+                                onClick={(entry) =>
+                                    navigate(
+                                        `/books?category=${encodeURIComponent(entry.payload.category)}`,
+                                    )
+                                }
+                                cursor="pointer"
+                                animationDuration={400}
+                                shape={(props: any) => (
+                                    <Rectangle
+                                        {...props}
+                                        fill={
+                                            activeCategory ===
+                                            props.payload.category
+                                                ? "var(--color-primary)"
+                                                : "var(--color-accent)"
+                                        }
+                                    />
+                                )}
                             />
                         </BarChart>
                     </ResponsiveContainer>
                 </CardContent>
             </Card>
 
-            {/* recent books table */}
+            {/* recent books table unchanged */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Recent Books</CardTitle>

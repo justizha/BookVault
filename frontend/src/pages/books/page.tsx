@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router";
 import { useTable, tableFeatures, flexRender } from "@tanstack/react-table";
-import { getBooks } from "@/api/books";
+import { getBooks, getBooksSummary } from "@/api/books";
 import { getColumns } from "@/components/books/columns";
 import {
     Table,
@@ -13,19 +13,36 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Book } from "@/types/book";
+import CategoryCombobox from "@/components/CategoryComboBox";
 
 const features = tableFeatures({});
+const ALL_CATEGORIES = "__all__";
 
 export default function BooksPage() {
-    const [page, setPage] = useState(1);
-    const [search, setSearch] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const category = searchParams.get("category") ?? undefined;
+    const search = searchParams.get("search") ?? "";
+    const page = Number(searchParams.get("page") ?? 1);
 
     const { data, isLoading } = useQuery({
-        queryKey: ["books", page, search],
+        queryKey: ["books", page, search, category],
         queryFn: () =>
-            getBooks({ page, search: search || undefined, per_page: 20 }),
+            getBooks({
+                page,
+                search: search || undefined,
+                category,
+                per_page: 20,
+            }),
+    });
+
+    const { data: summary } = useQuery({
+        queryKey: ["books-summary"],
+        queryFn: getBooksSummary,
+        staleTime: 5 * 60 * 1000,
     });
 
     const columns = getColumns(
@@ -39,20 +56,63 @@ export default function BooksPage() {
         columns,
     });
 
+    function updateParams(updates: Record<string, string | undefined>) {
+        const next = new URLSearchParams(searchParams);
+        for (const [key, value] of Object.entries(updates)) {
+            if (value) next.set(key, value);
+            else next.delete(key);
+        }
+        setSearchParams(next);
+    }
+
+    function handleSearchChange(value: string) {
+        updateParams({ search: value || undefined, page: undefined });
+    }
+
+    function handleCategoryChange(value: string) {
+        updateParams({
+            category: value === ALL_CATEGORIES ? undefined : value,
+            page: undefined,
+        });
+    }
+
+    function goToPage(nextPage: number) {
+        updateParams({ page: nextPage > 1 ? String(nextPage) : undefined });
+    }
+
     return (
         <div className="space-y-4 p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold">Books</h1>
-                <Input
-                    placeholder="Search books..."
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        setPage(1);
-                    }}
-                    className="max-w-sm"
-                />
+                <div className="flex items-center gap-2">
+                    <CategoryCombobox
+                        categories={summary?.by_category ?? []}
+                        value={category}
+                        onChange={(value) =>
+                            handleCategoryChange(value ?? ALL_CATEGORIES)
+                        }
+                    />
+                    <Input
+                        placeholder="Search books..."
+                        value={search}
+                        onChange={(e) => handleSearchChange(e.target.value)}
+                        className="max-w-sm"
+                    />
+                </div>
             </div>
+
+            {category && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>Filtering by</span>
+                    <Badge variant="secondary">{category}</Badge>
+                    <button
+                        onClick={() => handleCategoryChange(ALL_CATEGORIES)}
+                        className="underline underline-offset-2 hover:text-foreground"
+                    >
+                        Clear
+                    </button>
+                </div>
+            )}
 
             {isLoading ? (
                 <Skeleton className="h-140 w-full" />
@@ -101,7 +161,7 @@ export default function BooksPage() {
                         variant="outline"
                         size="sm"
                         disabled={page <= 1}
-                        onClick={() => setPage((p) => p - 1)}
+                        onClick={() => goToPage(page - 1)}
                     >
                         Previous
                     </Button>
@@ -109,7 +169,7 @@ export default function BooksPage() {
                         variant="outline"
                         size="sm"
                         disabled={page >= (data?.last_page ?? 1)}
-                        onClick={() => setPage((p) => p + 1)}
+                        onClick={() => goToPage(page + 1)}
                     >
                         Next
                     </Button>
