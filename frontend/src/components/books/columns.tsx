@@ -8,12 +8,13 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {  tableFeatures } from "@tanstack/react-table";
 import { MoreHorizontalIcon } from "lucide-react";
-
+const features = tableFeatures({})
 export function getColumns(
     onEdit: (book: Book) => void,
-    onDelete: (book: Book) => void,
-): ColumnDef<Book>[] {
+    onDelete: (book: Book) => void
+): ColumnDef<typeof features, Book>[] {
     return [
         { accessorKey: "title", header: "Title" },
         { accessorKey: "author", header: "Author" },
@@ -50,10 +51,10 @@ export function getColumns(
             id: "actions",
             cell: ({ row }) => (
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Button variant="ghost" size="icon">
-                            <MoreHorizontalIcon className="size-4" />
-                        </Button>
+                    <DropdownMenuTrigger
+                        render={<Button variant="ghost" size="icon" />}
+                    >
+                        <MoreHorizontalIcon className="size-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onEdit(row.original)}>
