@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 import { useTable, tableFeatures, flexRender } from "@tanstack/react-table";
-import { getBooks, getBooksSummary } from "@/api/books";
+import { getBooks, getBooksSummary, deleteBook } from "@/api/books";
 import { getColumns } from "@/components/books/columns";
 import {
     Table,
@@ -15,6 +16,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import type { Book } from "@/types/book";
 import CategoryCombobox from "@/components/CategoryComboBox";
 
@@ -23,10 +35,13 @@ const ALL_CATEGORIES = "__all__";
 
 export default function BooksPage() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const queryClient = useQueryClient();
 
     const category = searchParams.get("category") ?? undefined;
     const search = searchParams.get("search") ?? "";
     const page = Number(searchParams.get("page") ?? 1);
+
+    const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
     const { data, isLoading } = useQuery({
         queryKey: ["books", page, search, category],
@@ -45,9 +60,23 @@ export default function BooksPage() {
         staleTime: 5 * 60 * 1000,
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: (bookCode: string) => deleteBook(bookCode),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["books"] });
+            queryClient.invalidateQueries({ queryKey: ["books-summary"] });
+            setBookToDelete(null);
+            toast.success("Book deactivated successfully");
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+    
+
     const columns = getColumns(
         (book: Book) => console.log("edit", book),
-        (book: Book) => console.log("delete", book),
+        (book: Book) => setBookToDelete(book),
     );
 
     const table = useTable({
@@ -78,6 +107,13 @@ export default function BooksPage() {
 
     function goToPage(nextPage: number) {
         updateParams({ page: nextPage > 1 ? String(nextPage) : undefined });
+    }
+
+    function handleDialogOpenChange(open: boolean) {
+        if (!open) {
+            setBookToDelete(null);
+            deleteMutation.reset();
+        }
     }
 
     return (
@@ -114,7 +150,7 @@ export default function BooksPage() {
                 </div>
             )}
 
-            {isLoading ? (
+            {isLoading || deleteMutation.isPending ? (
                 <Skeleton className="h-140 w-full" />
             ) : (
                 <div className="border h-140 overflow-y-auto">
@@ -175,6 +211,45 @@ export default function BooksPage() {
                     </Button>
                 </div>
             </div>
+
+            <AlertDialog
+                open={!!bookToDelete}
+                onOpenChange={handleDialogOpenChange}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Deactivate book?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            "{bookToDelete?.title}" will be marked inactive and
+                            hidden from the active book list. This can be
+                            reversed later.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    {deleteMutation.isError && (
+                        <p className="text-sm text-destructive">
+                            Failed to deactivate this book. Please try again.
+                        </p>
+                    )}
+
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={deleteMutation.isPending}>
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            disabled={deleteMutation.isPending}
+                            onClick={() =>
+                                bookToDelete &&
+                                deleteMutation.mutate(bookToDelete.book_code)
+                            }
+                        >
+                            {deleteMutation.isPending
+                                ? "Deactivating..."
+                                : "Deactivate"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

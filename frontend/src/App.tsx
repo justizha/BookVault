@@ -10,7 +10,7 @@ const queryClient = new QueryClient();
 import { ThemeProvider } from "@/components/theme-provider";
 import NotFound from "./pages/NotFound";
 import BooksPage from "./pages/books/page";
-
+import { Toaster } from "./components/ui/sonner";
 /**
  * Renders the application with shared providers and client-side routes.
  */
@@ -38,6 +38,7 @@ export default function App() {
                     </Routes>
                 </ThemeProvider>
             </BrowserRouter>
+            <Toaster />
         </QueryClientProvider>
     );
 }

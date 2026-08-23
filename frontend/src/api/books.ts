@@ -14,3 +14,13 @@ export const getBooks = (params: GetBooksParams = {}) =>
 
 export const getBooksSummary = () =>
     api.get<BooksSummary>("/v1/books/summary").then((res) => res.data);
+
+export interface DeleteBookResponse {
+    message: string;
+}
+
+export const deleteBook = (bookCode: string) =>
+    api
+        .delete<DeleteBookResponse>(`/v1/books/${bookCode}`)
+        .then((res) => res.data);
+
