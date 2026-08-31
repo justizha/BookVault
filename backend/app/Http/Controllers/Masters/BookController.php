@@ -17,20 +17,20 @@ class BookController extends Controller
      * @param Request $request Request parameters for category filtering, title search, pagination size, and pagination.
      * @return \Illuminate\Http\JsonResponse A paginated JSON response containing the matching books.
      */
-    public function index(Request $request){
-        $books = Book::with(['stock', 'currentPrice'])
-                ->active()
-                ->when($request->filled('category'), fn ($q) =>
-                    $q->where('category', $request->category)
-                )
-                ->when($request->filled('search'), fn ($q) =>
-                    $q->where('title', 'ILIKE', '%' . $request->search . '%')
-                )
-                ->orderBy('title')
-                ->paginate($request->integer('per_page', 20));
-
-        return response()->json($books);
-    }
+     public function index(Request $request)
+     {
+         $books = Book::active()
+             ->when($request->filled('category'), fn ($q) =>
+                 $q->where('category', $request->category)
+             )
+             ->when($request->filled('search'), fn ($q) =>
+                 $q->where('title', 'ILIKE', '%' . $request->search . '%')
+             )
+             ->orderBy('title')
+             ->paginate($request->integer('per_page', 20));
+     
+         return response()->json($books);
+     }
 
     /**
      * Provides aggregate inventory statistics and recently created active books.
