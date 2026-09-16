@@ -88,7 +88,7 @@ class ComposerDependenciesTest extends TestCase
 
     public function test_composer_json_php_constraint_is_unchanged_by_the_upgrade(): void
     {
-        $this->assertSame('^8.2', $this->composerJson['require']['php']);
+        $this->assertSame('^8.3', $this->composerJson['require']['php']);
     }
 
     public function test_composer_json_unrelated_direct_dependencies_are_untouched(): void
@@ -104,7 +104,7 @@ class ComposerDependenciesTest extends TestCase
 
     public function test_composer_lock_content_hash_matches_the_upgraded_composer_json(): void
     {
-        $this->assertSame('9a352c5869ea0b8bb38fa8e5c8e78e56', $this->composerLock['content-hash']);
+        $this->assertSame('11f282378062d9db5d9f4d0abf567164', $this->composerLock['content-hash']);
     }
 
     public function test_composer_lock_content_hash_is_a_valid_md5_hash(): void
