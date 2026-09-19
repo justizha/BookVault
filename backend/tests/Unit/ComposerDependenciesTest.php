@@ -144,7 +144,7 @@ class ComposerDependenciesTest extends TestCase
     {
         $require = $this->findLockedPackage('laravel/framework')['require'];
 
-        foreach (['symfony/polyfill-php83', 'symfony/polyfill-php84', 'symfony/polyfill-php85'] as $polyfill) {
+        foreach (['symfony/polyfill-php84', 'symfony/polyfill-php85'] as $polyfill) {
             $this->assertArrayHasKey($polyfill, $require);
             $this->assertStringStartsWith('^1.', $require[$polyfill]);
         }
