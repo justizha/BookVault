@@ -5,7 +5,7 @@ A full-stack book store management system built as a hands-on learning project â
 ## Stack
 
 **Backend**
-- Laravel 12 (PHP 8.3)
+- Laravel 13 (PHP 8.3)
 - PostgreSQL
 - Laravel Sanctum (API token authentication)
 
