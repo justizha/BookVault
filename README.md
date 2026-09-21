@@ -21,7 +21,6 @@ A full-stack book store management system built as a hands-on learning project â
 
 **Tooling**
 - Bun (frontend package manager)
-- ESLint
 - GitHub Actions (CI for both frontend and backend)
 
 ## Features
